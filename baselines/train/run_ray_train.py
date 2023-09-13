@@ -1,7 +1,9 @@
 import argparse
 import os
 import ray
-
+import tensorflow as tf
+# disable tf warnings
+tf.get_logger().setLevel('ERROR')
 
 from typing import *
 from ray import air
@@ -25,7 +27,7 @@ def get_cli_args():
   parser.add_argument(
       "--num_gpus",
       type=int,
-      default=0,
+      default=1,
       help="Number of GPUs to run on (can be a fraction)",
   )
   parser.add_argument(
@@ -133,7 +135,7 @@ if __name__ == "__main__":
         configs.num_gpus = 0
 
 
-  # Setup WanDB 
+  # Setup WanDB  
   if "WANDB_API_KEY" in os.environ and args.wandb:
     wandb_project = f'{args.exp}_{args.framework}'
     wandb_group = "meltingpot"

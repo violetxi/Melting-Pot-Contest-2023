@@ -51,7 +51,6 @@ def get_experiment_config(args, default_config):
         scale_factor = 1
 
     params_dict = {
-
         # resources
         "num_rollout_workers": args.num_workers,
         "num_gpus": args.num_gpus,
@@ -60,12 +59,11 @@ def get_experiment_config(args, default_config):
         "env_name": "meltingpot",
         "env_config": {"substrate": substrate_name, "roles": player_roles, "scaled": scale_factor},
 
-
         # training
         "seed": args.seed,
-        "rollout_fragment_length": 10,
-        "train_batch_size": 400,
-        "sgd_minibatch_size": 32,
+        "rollout_fragment_length": 1000,
+        "train_batch_size": 10000,
+        "sgd_minibatch_size": 2048,
         "disable_observation_precprocessing": True,
         "use_new_rl_modules": False,
         "use_new_learner_api": False,
@@ -86,8 +84,8 @@ def get_experiment_config(args, default_config):
         # experiment trials
         "exp_name": args.exp,
         "stopping": {
-                    #"timesteps_total": 1000000,
-                    "training_iteration": 1,
+                    "timesteps_total": 1000000,
+                    #"training_iteration": 1000,
                     #"episode_reward_mean": 100,
         },
         "num_checkpoints": 5,
@@ -96,11 +94,8 @@ def get_experiment_config(args, default_config):
         "results_dir": args.results_dir,
         "logging": args.logging,
 
-    }
-
-    
-    # Preferrable to update the parameters in above dict before changing anything below
-    
+    }    
+    # Preferrable to update the parameters in above dict before changing anything below    
     run_configs = default_config
     experiment_configs = {}
     tune_configs = None
@@ -148,8 +143,10 @@ def get_experiment_config(args, default_config):
 
     run_configs.multi_agent(policies=policies, policy_mapping_fn=(lambda agent_id, *args, **kwargs: 
                                                                   player_to_agent[agent_id]))
-    
+    # Agent NN Model
+    # Fully connect network with number of hidden layers to be used.
     run_configs.model["fcnet_hiddens"] = params_dict['fcnet_hidden']
+    # Post conv fcnet with number of hidden layers to be used.
     run_configs.model["post_fcnet_hiddens"] = params_dict['post_fcnet_hidden']
     run_configs.model["conv_activation"] = params_dict['cnn_activation'] 
     run_configs.model["fcnet_activation"] = params_dict['fcnet_activation']
