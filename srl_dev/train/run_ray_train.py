@@ -1,18 +1,17 @@
 import argparse
 import os
+# disble tensorflow warning logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import ray
-import tensorflow as tf
-# disable tf warnings
-tf.get_logger().setLevel('ERROR')
 
 from typing import *
 from ray import air
 from ray import tune
-from configs import get_experiment_config
 from ray.rllib.algorithms import ppo
 from ray.tune import registry
 from ray.air.integrations.wandb import WandbLoggerCallback
-from baselines.train import make_envs
+import make_envs
+
 
 def get_cli_args():
   
@@ -42,7 +41,7 @@ def get_cli_args():
   )
   parser.add_argument(
         "--algo",
-        choices=["ppo"],
+        choices=["ppo", "icm"],
         default="ppo",
         help="Algorithm to train agents.",
   )
@@ -80,8 +79,9 @@ def get_cli_args():
   
   parser.add_argument(
         "--wandb",
-        type=bool,
-        default=False,
+        action="store_true",
+        # type=bool,
+        # default=False,
         help="Whether to use WanDB logging.",
   )
 
@@ -113,16 +113,22 @@ if __name__ == "__main__":
   # Register meltingpot environment
   registry.register_env("meltingpot", make_envs.env_creator)
 
-  # Initialize default configurations for native RLlib algorithms
-  if args.algo == "ppo":
-     trainer = "PPO"
-     default_config = ppo.PPOConfig()
+  # initialize default configurations for native RLlib algorithms (we use one solver 
+  # all exploration modules)  
+  trainer = "PPO"
+  default_config = ppo.PPOConfig()
+  if args.algo == "ppo":    
+    # Fetch experiment configurations
+    from configs import get_experiment_config
+    configs, exp_config, tune_config = get_experiment_config(args, default_config)
+  elif args.algo == "icm":
+    assert args.num_workers == 0, "ICM does not support multi-worker training."
+    from icm_configs import get_experiment_icm_config
+    configs, exp_config, tune_config = get_experiment_icm_config(args, default_config)
   else:
      print('The selected option is not tested. You may encounter issues if you use the baseline \
            policy configurations with non-tested algorithms')
-
-  # Fetch experiment configurations
-  configs, exp_config, tune_config = get_experiment_config(args, default_config)
+ 
   
   # Ensure GPU is available if set to True
   if configs.num_gpus > 0:
@@ -137,7 +143,7 @@ if __name__ == "__main__":
   # Setup WanDB  
   if "WANDB_API_KEY" in os.environ and args.wandb:
     wandb_project = f'{args.exp}_{args.framework}'
-    wandb_group = "meltingpot"
+    wandb_group = f"{args.algo}"
 
     # Set up Weights And Biases logging if API key is set in environment variable.
     wdb_callbacks = [
@@ -161,19 +167,27 @@ if __name__ == "__main__":
     tune_config = tune.TuneConfig(reuse_actors=False)
 
 
-  # Setup checkpointing configurations
+  # Setup checkpointing configurations documentation
+  # https://docs.ray.io/en/latest/train/api/doc/ray.train.CheckpointConfig.html?highlight=checkpoint_score_attribute
   ckpt_config = air.CheckpointConfig(
     num_to_keep=exp_config['keep'], 
-    checkpoint_frequency=exp_config['freq'], 
     checkpoint_score_attribute=exp_config['checkpoint_score_attr'],
+    checkpoint_score_order=exp_config['checkpoint_score_order'],  
+    checkpoint_frequency=exp_config['freq'],     
     checkpoint_at_end=exp_config['end'])
 
-  # Run Trials
+  # Run Trials documentation https://docs.ray.io/en/latest/tune/api/doc/ray.tune.Tuner.html#ray-tune-tuner  
   results = tune.Tuner(
-      trainer,
+      trainer,    # trainable to be tuned
       param_space=configs.to_dict(),
-      run_config=air.RunConfig(name = exp_config['name'], callbacks=wdb_callbacks, local_dir=exp_config['dir'], 
-                               stop=exp_config['stop'], checkpoint_config=ckpt_config, verbose=0),
+      # documentation for air.RunConfig https://github.com/ray-project/ray/blob/c3a9756bf0c7691679edb679f666ae39614ba7e8/python/ray/air/config.py#L575
+      run_config=air.RunConfig(
+        name=exp_config['name'], 
+        callbacks=wdb_callbacks,
+        local_dir=exp_config['dir'], 
+        stop=exp_config['stop'], 
+        checkpoint_config=ckpt_config, 
+        verbose=0),
   ).fit()
 
   best_result = results.get_best_result(metric="episode_reward_mean", mode="max")
