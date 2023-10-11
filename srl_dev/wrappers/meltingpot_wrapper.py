@@ -3,7 +3,7 @@ from gymnasium import spaces
 import numpy as np
 from ray.rllib.env import multi_agent_env
 
-from train import utils
+from srl_dev.train import utils
 
 PLAYER_STR_FORMAT = 'player_{index}'
 

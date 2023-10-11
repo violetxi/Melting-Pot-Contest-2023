@@ -1,6 +1,6 @@
-from wrappers.meltingpot_wrapper import MeltingPotEnv
+from srl_dev.wrappers.meltingpot_wrapper import MeltingPotEnv
 from meltingpot import substrate
-from wrappers.downsamplesubstrate_wrapper import DownSamplingSubstrateWrapper
+from srl_dev.wrappers.downsamplesubstrate_wrapper import DownSamplingSubstrateWrapper
 from ml_collections import config_dict
 
 def env_creator(env_config):
