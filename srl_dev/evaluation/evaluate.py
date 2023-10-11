@@ -18,6 +18,8 @@ from meltingpot.utils.evaluation import evaluation
 from meltingpot.utils.policies import policy as policy_lib
 
 
+# @TODO: evaluation fails when using scenarios which has focal agents being visited..
+# still working on to figure out why this is happening
 @contextlib.contextmanager
 def build_focal_population(
     ckpt_paths, policy_ids, scale
@@ -84,7 +86,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--num_episodes",
       type=int,
-      default=2,
+      default=8,
       help="Number of episodes to run evaluation",
   )
   parser.add_argument(
@@ -139,6 +141,8 @@ if __name__ == "__main__":
   
   results, scenario = run_evaluation(args)
   print(f"Results for {scenario}: ")
+  #@TODO: result should also include model information
+  results.to_csv(f'./eval_results_{scenario}.csv')
   with pd.option_context('display.max_rows', None, 'display.max_columns', None):
       print(results)
 
