@@ -1,7 +1,7 @@
 import numpy as np
 import dm_env
 
-from baselines.train import utils
+from train import utils
 from meltingpot.utils.substrates.wrappers import observables
 from meltingpot.utils.substrates import substrate
 from collections.abc import Mapping, Sequence

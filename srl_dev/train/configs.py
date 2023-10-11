@@ -1,3 +1,8 @@
+import os
+import sys
+# append path to this file to sys.path
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 from meltingpot import substrate
 from ray.rllib.policy import policy
 import make_envs

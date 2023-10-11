@@ -98,7 +98,7 @@ setuptools.setup(
     cmdclass={'build_py': BuildPy},
     package_dir={
         'meltingpot': 'meltingpot',
-        'baselines': 'baselines',
+        'srl_dev': 'srl_dev',
     },
     package_data={
         'meltingpot.lua': ['**'],

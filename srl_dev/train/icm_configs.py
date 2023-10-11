@@ -108,15 +108,15 @@ def get_experiment_icm_config(args, default_config):
         "type": "Curiosity",
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 16,  # Dimensionality of the generated feature vectors.
-        # Setup of the feature net (used to encode observations into feature (latent) vectors).
+        "feature_dim": 16,  # Dimensionality of the generated feature vectors.        
         "feature_net_config": {
-            "fcnet_hiddens": [],
+            "conv_filters": [[16, [3, 3], 1], [32, [3, 3], 1]],
+            "fcnet_hiddens": [4, 4],
             "fcnet_activation": "relu",
         },
-        "inverse_net_hiddens": [32],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [16],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [32],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [16],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"

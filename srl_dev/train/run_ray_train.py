@@ -20,7 +20,7 @@ def get_cli_args():
   parser.add_argument(
       "--num_workers",
       type=int,
-      default=2,
+      default=0,
       help="Number of workers to use for sample collection. Setting it zero will use same worker for collection and model training.",
   )
   parser.add_argument(
@@ -32,7 +32,7 @@ def get_cli_args():
   parser.add_argument(
       "--local",
       action="store_true",
-      help="If enabled, init ray in local mode.",
+      help="If enabled, init ray in local mode. Tips: use this for debugging.",
   )
   parser.add_argument(
       "--no-tune",
@@ -68,7 +68,7 @@ def get_cli_args():
       "--results_dir",
       type=str,
       default="./results",
-      help="Name of the wandb group",
+      help="path to save results",
   )
   parser.add_argument(
         "--logging",
@@ -140,10 +140,10 @@ if __name__ == "__main__":
         configs.num_gpus = 0
 
 
-  # Setup WanDB  
+  # Setup WanDB    
   if "WANDB_API_KEY" in os.environ and args.wandb:
     wandb_project = f'{args.exp}_{args.framework}'
-    wandb_group = f"{args.algo}"
+    wandb_group = f'{args.algo}'
 
     # Set up Weights And Biases logging if API key is set in environment variable.
     wdb_callbacks = [
