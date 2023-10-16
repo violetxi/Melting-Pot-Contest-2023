@@ -28,13 +28,28 @@ SUPPORTED_SCENARIOS = [
     'territory__rooms_1',
     'territory__rooms_2',
     'territory__rooms_3',
-    # running with scissors
+    # running with scissors arena
     'running_with_scissors_in_the_matrix__arena__rock_margin_0',
     'running_with_scissors_in_the_matrix__arena__rock_margin_1',
     'running_with_scissors_in_the_matrix__arena__paper_margin_0',
     'running_with_scissors_in_the_matrix__arena__paper_margin_1',
     'running_with_scissors_in_the_matrix__arena__scissors_margin_0',
     'running_with_scissors_in_the_matrix__arena__scissors_margin_1',
+    # running with scissors repeated
+    'running_with_scissors_in_the_matrix__repeated__rock_margin_0',
+    'running_with_scissors_in_the_matrix__repeated__paper_margin_0',
+    'running_with_scissors_in_the_matrix__repeated__scissors_margin_0',
+    'running_with_scissors_in_the_matrix__repeated__resp2prev_margin_0',
+    'running_with_scissors_in_the_matrix__repeated__rock_0',
+    'running_with_scissors_in_the_matrix__repeated__paper_0',
+    'running_with_scissors_in_the_matrix__repeated__scissors_0',
+    'running_with_scissors_in_the_matrix__repeated__flip_r2s_0',
+    'running_with_scissors_in_the_matrix__repeated__flip_p2r_0',
+    'running_with_scissors_in_the_matrix__repeated__flip_s2p_0',
+    'running_with_scissors_in_the_matrix__repeated__flip_r2s_1',
+    'running_with_scissors_in_the_matrix__repeated__flip_p2r_1',
+    'running_with_scissors_in_the_matrix__repeated__flip_s2p_1',
+    'running_with_scissors_in_the_matrix__repeated__free_0',
 ]
 
 IGNORE_KEYS = ['WORLD.RGB', 'INTERACTION_INVENTORIES', 'NUM_OTHERS_WHO_CLEANED_THIS_STEP']
@@ -52,9 +67,11 @@ def get_experiment_config(args, default_config):
         substrate_name = "territory__rooms"
     elif args.exp == 'running_with_scissors_arena':
         substrate_name = "running_with_scissors_in_the_matrix__arena"
+    elif args.exp == 'running_with_scissors_repeated':
+        substrate_name = "running_with_scissors_in_the_matrix__repeated"
     else:
         raise Exception("Please set --exp to be one of ['pd_arena', 'al_harvest', 'clean_up', \
-                        'territory_rooms', 'runnig_with_scissors_arena']. Other substrates are not supported.")
+                        'territory_rooms', 'running_with_scissors_arena', 'running_with_scissors_repeated']. Other substrates are not supported.")
 
     # Fetch player roles
     player_roles = substrate.get_config(substrate_name).default_player_roles
