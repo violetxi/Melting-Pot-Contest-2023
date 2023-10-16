@@ -65,13 +65,13 @@ def get_experiment_config(args, default_config):
         substrate_name = "clean_up"
     elif args.exp == 'territory_rooms':
         substrate_name = "territory__rooms"
-    elif args.exp == 'running_with_scissors_arena':
+    elif args.exp == 'rws_arena':
         substrate_name = "running_with_scissors_in_the_matrix__arena"
-    elif args.exp == 'running_with_scissors_repeated':
+    elif args.exp == 'rws_repeated':
         substrate_name = "running_with_scissors_in_the_matrix__repeated"
     else:
         raise Exception("Please set --exp to be one of ['pd_arena', 'al_harvest', 'clean_up', \
-                        'territory_rooms', 'running_with_scissors_arena', 'running_with_scissors_repeated']. Other substrates are not supported.")
+                        'territory_rooms', 'rws_arena', 'rws_repeated']. Other substrates are not supported.")
 
     # Fetch player roles
     player_roles = substrate.get_config(substrate_name).default_player_roles
@@ -116,7 +116,8 @@ def get_experiment_config(args, default_config):
         # experiment trials
         "exp_name": args.exp,
         "stopping": {
-                    "timesteps_total": 1000000,
+                    #"timesteps_total": 1000000,
+                    "timesteps_total": 1e8,
                     #"training_iteration": 1000,
                     #"episode_reward_mean": 100,
         },
