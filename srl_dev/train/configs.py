@@ -50,7 +50,7 @@ def get_experiment_config(args, default_config):
         substrate_name = "clean_up"
     elif args.exp == 'territory_rooms':
         substrate_name = "territory__rooms"
-    elif args.exp == 'runnig_with_scissors_arena':
+    elif args.exp == 'running_with_scissors_arena':
         substrate_name = "running_with_scissors_in_the_matrix__arena"
     else:
         raise Exception("Please set --exp to be one of ['pd_arena', 'al_harvest', 'clean_up', \
