@@ -144,6 +144,23 @@ class Population:
       future = self._executor.submit(step_fn, bot_timestep)
       self._action_futures.append(future)
 
+  # # original code
+  # def await_action(self) -> Sequence[int]:
+  #   """Waits for the population action in response to last timestep.
+
+  #   Returns:
+  #     The action for the population.
+
+  #   Raises:
+  #     RuntimeError: no timestep has been sent.
+  #   """
+  #   if not self._action_futures:
+  #     raise RuntimeError('No timestep sent.')
+  #   actions = tuple(future.result() for future in self._action_futures)
+  #   self._action_futures.clear()
+  #   self._action_subject.on_next(actions)
+  #   return actions
+
   def await_action(self) -> Sequence[int]:
     """Waits for the population action in response to last timestep.
 
@@ -154,11 +171,23 @@ class Population:
       RuntimeError: no timestep has been sent.
     """
     if not self._action_futures:
-      raise RuntimeError('No timestep sent.')
-    actions = tuple(future.result() for future in self._action_futures)
+        raise RuntimeError('No timestep sent.')
+
+    actions = []
+    for future in self._action_futures:
+        # This just bypasses the `CUDNN_STATUS_EXECUTION_FAILED` error for now
+        # @TODO: fix the race condition during multi-processing soonish.
+        try:
+            actions.append(future.result())
+        except Exception as e:  # Catch the exception from the future.
+            print(f"An error occurred: {e}")  # Or handle it as per your requirement.            
+            # append noop action to the actions list when error occurs
+            actions.append(0)
+    
     self._action_futures.clear()
     self._action_subject.on_next(actions)
     return actions
+
 
   def observables(self) -> PopulationObservables:
     """Returns the observables for the population."""
