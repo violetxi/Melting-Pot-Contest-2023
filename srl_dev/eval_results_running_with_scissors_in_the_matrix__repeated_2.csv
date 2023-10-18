@@ -1,0 +1,9 @@
+,background_per_capita_return,background_player_names,background_player_returns,focal_per_capita_return,focal_player_names,focal_player_returns
+0,0.0,['running_with_scissors_in_the_matrix__repeated__scissors_margin_0'],[0.],0.0,['agent_1'],[0.]
+1,0.8333333333333335,['running_with_scissors_in_the_matrix__repeated__paper_margin_0'],[0.83333333],-0.8333333333333335,['agent_0'],[-0.83333333]
+2,-10.879578754578755,['running_with_scissors_in_the_matrix__repeated__scissors_margin_0'],[-10.87957875],10.879578754578755,['agent_0'],[10.87957875]
+3,3.026094276094277,['running_with_scissors_in_the_matrix__repeated__scissors_margin_0'],[3.02609428],-3.026094276094277,['agent_0'],[-3.02609428]
+4,-3.201839826839827,['running_with_scissors_in_the_matrix__repeated__scissors_margin_0'],[-3.20183983],3.201839826839827,['agent_0'],[3.20183983]
+5,5.555555555555555,['running_with_scissors_in_the_matrix__repeated__scissors_margin_0'],[5.55555556],-5.555555555555555,['agent_1'],[-5.55555556]
+6,7.023809523809524,['running_with_scissors_in_the_matrix__repeated__paper_margin_0'],[7.02380952],-7.023809523809524,['agent_0'],[-7.02380952]
+7,-5.972222222222222,['running_with_scissors_in_the_matrix__repeated__paper_margin_0'],[-5.97222222],5.972222222222222,['agent_0'],[5.97222222]

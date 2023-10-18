@@ -36,20 +36,20 @@ SUPPORTED_SCENARIOS = [
     'running_with_scissors_in_the_matrix__arena__scissors_margin_0',
     'running_with_scissors_in_the_matrix__arena__scissors_margin_1',
     # running with scissors repeated
-    'running_with_scissors_in_the_matrix__repeated__rock_margin_0',
-    'running_with_scissors_in_the_matrix__repeated__paper_margin_0',
-    'running_with_scissors_in_the_matrix__repeated__scissors_margin_0',
-    'running_with_scissors_in_the_matrix__repeated__resp2prev_margin_0',
-    'running_with_scissors_in_the_matrix__repeated__rock_0',
-    'running_with_scissors_in_the_matrix__repeated__paper_0',
-    'running_with_scissors_in_the_matrix__repeated__scissors_0',
-    'running_with_scissors_in_the_matrix__repeated__flip_r2s_0',
-    'running_with_scissors_in_the_matrix__repeated__flip_p2r_0',
-    'running_with_scissors_in_the_matrix__repeated__flip_s2p_0',
-    'running_with_scissors_in_the_matrix__repeated__flip_r2s_1',
-    'running_with_scissors_in_the_matrix__repeated__flip_p2r_1',
-    'running_with_scissors_in_the_matrix__repeated__flip_s2p_1',
-    'running_with_scissors_in_the_matrix__repeated__free_0',
+    'running_with_scissors_in_the_matrix__repeated_0',
+    'running_with_scissors_in_the_matrix__repeated_1',
+    'running_with_scissors_in_the_matrix__repeated_2',
+    'running_with_scissors_in_the_matrix__repeated_3',
+    'running_with_scissors_in_the_matrix__repeated_4',
+    'running_with_scissors_in_the_matrix__repeated_5',
+    'running_with_scissors_in_the_matrix__repeated_6',
+    'running_with_scissors_in_the_matrix__repeated_7',
+    'running_with_scissors_in_the_matrix__repeated_8',
+    # running with scissors one shot
+    'running_with_scissors_in_the_matrix__one_shot_0',
+    'running_with_scissors_in_the_matrix__one_shot_1',
+    'running_with_scissors_in_the_matrix__one_shot_2',
+    'running_with_scissors_in_the_matrix__one_shot_3',
 ]
 
 IGNORE_KEYS = ['WORLD.RGB', 'INTERACTION_INVENTORIES', 'NUM_OTHERS_WHO_CLEANED_THIS_STEP']
@@ -69,9 +69,11 @@ def get_experiment_config(args, default_config):
         substrate_name = "running_with_scissors_in_the_matrix__arena"
     elif args.exp == 'rws_repeated':
         substrate_name = "running_with_scissors_in_the_matrix__repeated"
+    elif args.exp == 'rws_one_shot':
+        substrate_name = "running_with_scissors_in_the_matrix__one_shot"
     else:
         raise Exception("Please set --exp to be one of ['pd_arena', 'al_harvest', 'clean_up', \
-                        'territory_rooms', 'rws_arena', 'rws_repeated']. Other substrates are not supported.")
+                        'territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot']. Other substrates are not supported.")
 
     # Fetch player roles
     player_roles = substrate.get_config(substrate_name).default_player_roles
