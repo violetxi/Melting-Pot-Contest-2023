@@ -73,25 +73,20 @@ def get_cli_args():
   )  
   parser.add_argument(
         "--wandb",
-        action="store_true",
-        # type=bool,
-        # default=False,
+        action="store_true",        
         help="Whether to use WanDB logging.",
   )
-
   parser.add_argument(
         "--downsample",
         type=bool,
         default=True,
         help="Whether to downsample substrates in MeltingPot. Defaults to 8.",
   )
-
   parser.add_argument(
         "--as-test",
         action="store_true",
         help="Whether this script should be run as a test.",
   )
-
   args = parser.parse_args()
   print("Running trails with the following arguments: ", args)
   return args

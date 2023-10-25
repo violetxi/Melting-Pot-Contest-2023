@@ -128,7 +128,7 @@ def get_experiment_config(args, default_config):
       metric='episode_reward_mean',
       mode='max',
       num_samples=200,    # number of trials, -1 means infinite
-      reuse_actors=False)  
+      reuse_actors=True)  
     """ End Parameter tuning """
     # Resources 
     run_configs.num_rollout_workers = params_dict['num_rollout_workers']
