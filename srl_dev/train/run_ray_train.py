@@ -119,10 +119,12 @@ if __name__ == "__main__":
   default_config = ppo.PPOConfig()
   if args.algo == "ppo":    
     # Fetch experiment configurations
-    from configs import get_experiment_config
+    #from configs import get_experiment_config
+    # hyperparameter search
+    from configs_search import get_experiment_config
     configs, exp_config, tune_config = get_experiment_config(args, default_config)
   elif args.algo == "icm":
-    assert args.num_workers == 0, "ICM does not support multi-worker training."
+    #assert args.num_workers == 0, "ICM does not support multi-worker training."
     from icm_configs import get_experiment_icm_config
     configs, exp_config, tune_config = get_experiment_icm_config(args, default_config)
   else:
@@ -180,6 +182,8 @@ if __name__ == "__main__":
   results = tune.Tuner(
       trainer,    # trainable to be tuned
       param_space=configs.to_dict(),
+      # hyperparam tuning - documentation for tune.TuneConfig: https://docs.ray.io/en/latest/tune/api/doc/ray.tune.TuneConfig.html#ray.tune.TuneConfig
+      tune_config=tune_config,
       # documentation for air.RunConfig https://github.com/ray-project/ray/blob/c3a9756bf0c7691679edb679f666ae39614ba7e8/python/ray/air/config.py#L575
       run_config=air.RunConfig(
         name=exp_config['name'], 

@@ -1,4 +1,10 @@
+import os
+import sys
+# append path to this file to sys.path
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 from meltingpot import substrate
+from ray import tune
 from ray.rllib.policy import policy
 import make_envs
 
@@ -50,7 +56,7 @@ SUPPORTED_SCENARIOS = [
 IGNORE_KEYS = ['WORLD.RGB', 'INTERACTION_INVENTORIES', 'NUM_OTHERS_WHO_CLEANED_THIS_STEP']
 
 
-def get_experiment_icm_config(args, default_config):
+def get_experiment_config(args, default_config):
     
     if args.exp == 'pd_arena':
         substrate_name = "prisoners_dilemma_in_the_matrix__arena"
@@ -129,31 +135,20 @@ def get_experiment_icm_config(args, default_config):
 
     }    
     # tunable parameters for ray.tune.Tuner
-    # default_config contains default parameter for the RL algorithm (e.g. PPO)        
-    run_configs = default_config.copy()
-    # add ICM configuration to run_configs    
-    run_configs["exploration_config"] = {
-        "type": "Curiosity",
-        "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
-        "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 16,  # Dimensionality of the generated feature vectors.        
-        "feature_net_config": {
-            #"conv_filters": [[16, [3, 3], 1], [32, [3, 3], 1]],
-            "conv_filters": [[16, [3, 3], 1], [32, [3, 3], 2], [16, [2, 2], 2]],
-            "fcnet_hiddens": [4, 4],
-            "fcnet_activation": "relu",
-        },
-        "inverse_net_hiddens": [16],  # Hidden layers of the "inverse" model.
-        "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [16],  # Hidden layers of the "forward" model.
-        "forward_net_activation": "relu",  # Activation of the "forward" model.
-        "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
-        # Specify, which exploration sub-type to use (usually, the algo's "default"
-        # exploration, e.g. EpsilonGreedy for DQN, StochasticSampling for PG/SAC).
-        "sub_exploration": {
-            "type": "StochasticSampling",
-        }
-    }
+    # default_config contains default parameter for the RL algorithm (e.g. PPO)    
+    run_configs = default_config
+    """ Parameter tuning:  check what's inside the default_config to 
+    identify what you want to tune """
+    run_configs['gamma'] = tune.uniform(0.9, 0.999)
+    run_configs['lr'] = tune.uniform(0.0001, 0.0005)
+    run_configs['entropy_coeff'] = tune.uniform(0.01, 0.3)
+    # this is config for the tuner
+    tune_configs = tune.TuneConfig(
+      metric='episode_reward_mean',
+      mode='max',
+      num_samples=200,    # number of trials, -1 means infinite
+      reuse_actors=False)  
+    """ End Parameter tuning """
     # Resources 
     run_configs.num_rollout_workers = params_dict['num_rollout_workers']
     run_configs.num_gpus = params_dict['num_gpus']
@@ -176,6 +171,7 @@ def get_experiment_icm_config(args, default_config):
     # Setup multi-agent policies. The below code will initialize independent
     # policies for each agent.
     base_env = make_envs.env_creator(run_configs.env_config)
+
     policies = {}
     player_to_agent = {}
     for i in range(len(player_roles)):
@@ -195,7 +191,7 @@ def get_experiment_icm_config(args, default_config):
         player_to_agent[f"player_{i}"] = f"agent_{i}"
 
     run_configs.multi_agent(policies=policies, policy_mapping_fn=(lambda agent_id, *args, **kwargs: 
-                                                                  player_to_agent[agent_id]))
+                                                                  player_to_agent[agent_id]))    
     # Agent NN Model
     # Fully connect network with number of hidden layers to be used.
     run_configs.model["fcnet_hiddens"] = params_dict['fcnet_hidden']
@@ -208,6 +204,7 @@ def get_experiment_icm_config(args, default_config):
     run_configs.model["lstm_use_prev_action"] = params_dict['lstm_use_prev_action']
     run_configs.model["lstm_use_prev_reward"] = params_dict['lstm_use_prev_reward']
     run_configs.model["lstm_cell_size"] = params_dict['lstm_cell_size']
+    """ Adding hyper-parameter to search """
 
     # ray air.RunConfig
     experiment_configs = {}
@@ -225,6 +222,5 @@ def get_experiment_icm_config(args, default_config):
     else:
         experiment_configs['dir'] = f"{params_dict['results_dir']}/torch"
  
-    # Tuning algorithm specific configs 
-    tune_configs = None
+        
     return run_configs, experiment_configs, tune_configs
