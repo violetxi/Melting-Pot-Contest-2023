@@ -162,11 +162,11 @@ if __name__ == "__main__":
 
 
   # Setup hyper-parameter optimization configs here
-  if not args.no_tune:
-    # NotImplementedError
-    tune_config = None
-  else:
-    tune_config = tune.TuneConfig(reuse_actors=False)
+  # if not args.no_tune:
+  #   # NotImplementedError
+  #   tune_config = None
+  # else:
+  #   tune_config = tune.TuneConfig(reuse_actors=False)
 
 
   # Setup checkpointing configurations documentation
@@ -191,7 +191,8 @@ if __name__ == "__main__":
         local_dir=exp_config['dir'], 
         stop=exp_config['stop'], 
         checkpoint_config=ckpt_config, 
-        verbose=0),
+        verbose=3),
+        #verbose=0),
   ).fit()
 
   best_result = results.get_best_result(metric="episode_reward_mean", mode="max")
