@@ -59,6 +59,8 @@ def get_experiment_config(args, default_config):
     
     if args.exp == 'pd_arena':
         substrate_name = "prisoners_dilemma_in_the_matrix__arena"
+    elif args.exp == 'pd_repeated':
+        substrate_name = "prisoners_dilemma_in_the_matrix__repeated"
     elif args.exp == 'al_harvest':
         substrate_name = "allelopathic_harvest__open"
     elif args.exp == 'clean_up':
@@ -72,7 +74,7 @@ def get_experiment_config(args, default_config):
     elif args.exp == 'rws_one_shot':
         substrate_name = "running_with_scissors_in_the_matrix__one_shot"
     else:
-        raise Exception("Please set --exp to be one of ['pd_arena', 'al_harvest', 'clean_up', \
+        raise Exception("Please set --exp to be one of ['pd_arena', 'pd_repeated', 'al_harvest', 'clean_up', \
                         'territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot']. Other substrates are not supported.")
 
     # Fetch player roles

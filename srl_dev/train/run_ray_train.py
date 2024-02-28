@@ -54,7 +54,7 @@ def get_cli_args():
   parser.add_argument(
       "--exp",
       type=str,
-      choices = ['pd_arena','al_harvest','clean_up','territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot'],
+      choices = ['pd_arena','pd_repeated','al_harvest','clean_up','territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot'],
       default="pd_arena",
       help="Name of the substrate to run",
   )
@@ -98,6 +98,13 @@ def get_cli_args():
         help="Whether this script should be run as a test.",
   )
 
+  parser.add_argument(
+        "--hyper_search",
+        type=int,
+        default=0,
+        help="Whether to run hyperparameter search.",
+  )      
+
   args = parser.parse_args()
   print("Running trails with the following arguments: ", args)
   return args
@@ -119,9 +126,11 @@ if __name__ == "__main__":
   default_config = ppo.PPOConfig()
   if args.algo == "ppo":    
     # Fetch experiment configurations
-    #from configs import get_experiment_config
-    # hyperparameter search
-    from configs_search import get_experiment_config
+    if args.hyper_search:
+      # hyperparameter search
+      from configs_search import get_experiment_config
+    else:
+      from configs import get_experiment_config
     configs, exp_config, tune_config = get_experiment_config(args, default_config)
   elif args.algo == "icm":
     #assert args.num_workers == 0, "ICM does not support multi-worker training."
