@@ -7,7 +7,7 @@ import ray
 from typing import *
 from ray import air
 from ray import tune
-from ray.rllib.algorithms import ppo
+from ray.rllib.algorithms import ppo, r2d2
 from ray.tune import registry
 from ray.air.integrations.wandb import WandbLoggerCallback
 import make_envs
@@ -41,7 +41,7 @@ def get_cli_args():
   )
   parser.add_argument(
         "--algo",
-        choices=["ppo", "icm"],
+        choices=["ppo", "icm", "dqn"],
         default="ppo",
         help="Algorithm to train agents.",
   )
@@ -122,9 +122,9 @@ if __name__ == "__main__":
 
   # initialize default configurations for native RLlib algorithms (we use one solver 
   # all exploration modules)  
-  trainer = "PPO"
-  default_config = ppo.PPOConfig()
-  if args.algo == "ppo":    
+  if args.algo == "ppo": 
+    trainer = "PPO"
+    default_config = ppo.PPOConfig()   
     # Fetch experiment configurations
     if args.hyper_search:
       # hyperparameter search
@@ -133,9 +133,21 @@ if __name__ == "__main__":
       from configs import get_experiment_config
     configs, exp_config, tune_config = get_experiment_config(args, default_config)
   elif args.algo == "icm":
+    trainer = "PPO"
+    default_config = ppo.PPOConfig()
     #assert args.num_workers == 0, "ICM does not support multi-worker training."
     from icm_configs import get_experiment_icm_config
     configs, exp_config, tune_config = get_experiment_icm_config(args, default_config)
+  elif args.algo == "dqn":
+    trainer = "DQN"
+    default_config = r2d2.R2D2Config()
+    # Fetch experiment configurations
+    if args.hyper_search:
+      # hyperparameter search
+      from configs_search import get_experiment_config
+    else:
+      from dqn_config import get_experiment_config
+    configs, exp_config, tune_config = get_experiment_config(args, default_config)
   else:
      print('The selected option is not tested. You may encounter issues if you use the baseline \
            policy configurations with non-tested algorithms')
