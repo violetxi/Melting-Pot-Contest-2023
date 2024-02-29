@@ -2,6 +2,7 @@ import os
 import sys
 # append path to this file to sys.path
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+import datetime
 
 from meltingpot import substrate
 from ray import tune
@@ -86,6 +87,12 @@ def get_experiment_config(args, default_config):
     else:
         scale_factor = 1
 
+
+    now = datetime.datetime.now()
+    date_time_str = now.strftime("%m-%d-%Y_%H-%M-%S")
+    # Create the subfolder path
+    exp_name = f'{args.exp}/PPO_{date_time_str}'
+
     params_dict = {
         # resources
         "num_rollout_workers": args.num_workers,
@@ -119,7 +126,7 @@ def get_experiment_config(args, default_config):
         "shared_policy": False,
 
         # experiment trials
-        "exp_name": args.exp,
+        "exp_name": exp_name,
         "stopping": {
                     #"timesteps_total": 1000000,
                     "timesteps_total": 100000,

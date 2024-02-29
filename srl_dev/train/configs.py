@@ -2,6 +2,7 @@ import os
 import sys
 # append path to this file to sys.path
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+import datetime
 
 from meltingpot import substrate
 from ray.rllib.policy import policy
@@ -24,6 +25,16 @@ SUPPORTED_SCENARIOS = [
     'prisoners_dilemma_in_the_matrix__arena_3',
     'prisoners_dilemma_in_the_matrix__arena_4',
     'prisoners_dilemma_in_the_matrix__arena_5',
+    'prisoners_dilemma_in_the_matrix__repeated_0',
+    'prisoners_dilemma_in_the_matrix__repeated_1',
+    'prisoners_dilemma_in_the_matrix__repeated_2',
+    'prisoners_dilemma_in_the_matrix__repeated_3',
+    'prisoners_dilemma_in_the_matrix__repeated_4',
+    'prisoners_dilemma_in_the_matrix__repeated_5',
+    'prisoners_dilemma_in_the_matrix__repeated_6',
+    'prisoners_dilemma_in_the_matrix__repeated_7',
+    'prisoners_dilemma_in_the_matrix__repeated_8',
+    'prisoners_dilemma_in_the_matrix__repeated_9',
     'territory__rooms_0',
     'territory__rooms_1',
     'territory__rooms_2',
@@ -85,6 +96,11 @@ def get_experiment_config(args, default_config):
     else:
         scale_factor = 1
 
+    now = datetime.datetime.now()
+    date_time_str = now.strftime("%m-%d-%Y_%H-%M-%S")
+    # Create the subfolder path
+    exp_name = f'{args.exp}/PPO_{date_time_str}'
+    
     params_dict = {
         # resources
         "num_rollout_workers": args.num_workers,
@@ -118,7 +134,7 @@ def get_experiment_config(args, default_config):
         "shared_policy": False,
 
         # experiment trials
-        "exp_name": args.exp,
+        "exp_name": exp_name,
         "stopping": {
                     #"timesteps_total": 1000000,
                     "timesteps_total": 1e8,
