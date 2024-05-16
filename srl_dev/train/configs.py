@@ -61,6 +61,10 @@ SUPPORTED_SCENARIOS = [
     'running_with_scissors_in_the_matrix__one_shot_1',
     'running_with_scissors_in_the_matrix__one_shot_2',
     'running_with_scissors_in_the_matrix__one_shot_3',
+    # collaborative cooking asymmetric 
+    'collaborative_cooking__asymmetric_0',
+    'collaborative_cooking__asymmetric_1',
+    'collaborative_cooking__asymmetric_2',
 ]
 
 IGNORE_KEYS = ['WORLD.RGB', 'INTERACTION_INVENTORIES', 'NUM_OTHERS_WHO_CLEANED_THIS_STEP']
@@ -84,9 +88,11 @@ def get_experiment_config(args, default_config):
         substrate_name = "running_with_scissors_in_the_matrix__repeated"
     elif args.exp == 'rws_one_shot':
         substrate_name = "running_with_scissors_in_the_matrix__one_shot"
+    elif args.exp == 'cc_asymm':
+        substrate_name = "collaborative_cooking__asymmetric"
     else:
         raise Exception("Please set --exp to be one of ['pd_arena', 'pd_repeated', 'al_harvest', 'clean_up', \
-                        'territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot']. Other substrates are not supported.")
+                        'territory_rooms', 'rws_arena', 'rws_repeated', 'rws_one_shot', 'cc_asymm']. Other substrates are not supported.")
 
     # Fetch player roles
     player_roles = substrate.get_config(substrate_name).default_player_roles
